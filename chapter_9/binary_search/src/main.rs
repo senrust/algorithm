@@ -125,6 +125,20 @@ impl BinaryTree {
             false
         }
     }
+
+    fn test(&mut self) {
+        let node_a = &mut self.left_child;
+        let node_b = &mut self.right_child;
+        match node_a {
+            &mut Some(ref mut xx) => {},
+            None => {},
+        }
+
+        match node_b {
+            Some(ref mut xx) => {},
+            None => {},
+        }
+    }
 }
 
 
