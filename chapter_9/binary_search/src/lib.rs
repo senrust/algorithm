@@ -50,11 +50,16 @@ impl<T> BinaryTree<T> {
     fn locate_mut<K>(&mut self, key: &K) -> &mut Link<T> where T: Indexed<K>, K: Ord {
         let mut anchor = &mut self.root;
         loop {
-            match anchor.as_ref() {
-                Some(n) if key != n.value.key() => {
-                    let node = anchor.as_mut().unwrap();
-                    anchor = if key < node.value.key() { &mut node.left } else { &mut node.right }
+            match anchor {
+                Some(n)if key == n.value.key() => {
+                    let node = anchor.as_mut().unwrap(); anchor = &mut  node.left;
                 }
+                Some(n) if key != n.value.key() => {
+                    // let node = anchor.as_mut().unwrap();
+                    anchor = if key < n.value.key() { &mut n.left } else { &mut n.right }
+                }
+                
+
                 _ => return anchor,
             }
         }
