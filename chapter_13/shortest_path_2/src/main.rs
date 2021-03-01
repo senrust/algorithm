@@ -11,12 +11,12 @@ enum NodeState {
 }
 
 #[derive(Copy, Clone, Eq, PartialEq)]
-struct State {
-    cost: usize,
+struct NodeCost {
+    cost: i32,
     node: usize,
 }
 
-impl Ord for State {
+impl Ord for NodeCost {
     fn cmp(&self, other: &Self) -> Ordering {
         // maxヒープをminヒープとして使用するためには, 
         // コストがより小さい方がGreaterとなるよう順序を反転する
@@ -26,30 +26,41 @@ impl Ord for State {
             .then_with(|| self.node.cmp(&other.node))
     }
 }
-impl PartialOrd for State {
+impl PartialOrd for NodeCost {
     fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
         Some(self.cmp(other))
     }
 }
 
-/*
-
-fn dikkstra(node_count: usize, graph: &mut Vec<Vec<(usize, i32)>>) {
+fn dikkstra(node_count: usize, graph: &mut Vec<Vec<(usize, i32)>>) -> Vec<i32> {
     let mut node_state: Vec<NodeState> = vec![NodeState::UnReached; node_count];
-    let mut cost_from_start :BinaryHeap<(usize, i32)> = BinaryHeap::new();
+    let mut cost_calc_heap :BinaryHeap<NodeCost> = BinaryHeap::new();
+    let mut cost_from_start: Vec<i32> = vec![i32::MAX; node_count];
 
     // start from node 0
+    cost_calc_heap.push(NodeCost{cost: 0, node:0});
     cost_from_start[0] = 0;
     
-    loop {
-        let mut cost_to_node = i32::MAX;
-        let mut is_unfinished_node_found = false;
+    while !cost_calc_heap.is_empty() {
+        let path_resolved_node = cost_calc_heap.pop().unwrap();
 
-        for 
+        // already found better path
+        if path_resolved_node.cost > cost_from_start[path_resolved_node.node] { continue; }
 
+        node_state[path_resolved_node.node] = NodeState::Finished;
+
+        for cost_to_node in &graph[path_resolved_node.node] {
+            if cost_from_start[cost_to_node.0] > cost_from_start[path_resolved_node.node] + cost_to_node.1 {
+                cost_from_start[cost_to_node.0] = cost_from_start[path_resolved_node.node] + cost_to_node.1;
+                node_state[cost_to_node.0] = NodeState::Reached;
+                cost_calc_heap.push(NodeCost{cost: cost_from_start[cost_to_node.0] , node:cost_to_node.0})
+            } 
+        }
     }
+    cost_from_start
 }
-*/
+
+
 fn main() {
 
     let node_count: usize = input::read_number();
@@ -64,11 +75,10 @@ fn main() {
             graph[node].push((node_to, path_cost));
         }
     }
-    /* 
+    
     let cost_from_start = dikkstra(node_count, &mut graph);
     for (node, cost) in cost_from_start.iter().enumerate() {
         println!("{} {}", node, cost);
     }
-    */
     
 }
