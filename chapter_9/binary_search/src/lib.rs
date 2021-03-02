@@ -107,7 +107,7 @@ fn successor<T>(mut next: &mut Link<T>) -> &mut Link<T> {
 // Removes a node, either by simply discarding it if it is a leaf, or by swapping it with
 // its inorder successor (which, in this case, is always in a leaf) and then deleting the leaf.
 fn delete_node<T>(link: &mut Link<T>) {
-    if let Some(mut boxed_node) = link.take() {
+    if let Some(mut  boxed_node) = link.take() {
         match (boxed_node.left.take(), boxed_node.right.take()) {
             (None, None) => (),
             (Some(left), None) => *link = Some(left),
